@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.OperatorMapper">
+
+    <select id="findByPage" resultType="cn.neusoft.domain.OperatorInfo">
+        select * from operator_info
+        <where>
+            <if test="op_name!=null and op_name!=''">
+                op_name LIKE CONCAT('%',#{op_name},'%')
+            </if>
+            <if test="op_id!=null and op_id!=''">
+                AND op_id LIKE CONCAT('%',#{op_id},'%')
+            </if>
+            <if test="op_tele!=null and op_tele!=''">
+                AND op_tele LIKE CONCAT('%',#{op_tele},'%')
+            </if>
+        </where> order by op_id
+    </select>
+
+    <select id="findOrderInfo" resultType="cn.neusoft.domain.order.OrderAll">
+        select * from
+        (select * from order_info_all where op_id=#{op_id}) as orderByOp
+        <where>
+            <if test="o_id!=null and o_id!=''">
+                o_id LIKE CONCAT('%',#{o_id},'%')
+            </if>
+            <if test="c_name!=null and c_name!=''">
+                AND c_name LIKE CONCAT('%',#{c_name},'%')
+            </if>
+            <if test="o_state!=null and o_state!=''">
+                AND o_state LIKE CONCAT('%',#{o_state},'%')
+            </if>
+        </where> order by o_id
+    </select>
+
+    <select id="findOperatorJobInfo" resultType="cn.neusoft.domain.order.OrderAll">
+        select * from order_info_all
+        <where>
+            <if test="p_name!=null and p_name!=''">
+                p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+            <if test="startTime!=null">
+                AND o_date &gt; #{startTime}
+            </if>
+            <if test="endTime!=null">
+                AND o_date &lt; #{endTime}
+            </if>
+            AND op_id=#{op_id}
+        </where> order by p_name
+    </select>
+
+    <update id="setOpIncome" parameterType="cn.neusoft.domain.OperatorInfo">
+        update operator_info
+        set op_income=#{op_income}
+        where op_id=#{op_id}
+    </update>
+
+<!--    <select id="findbycondition" resultType="cn.neusoft.domain.fenzhan.Bill">-->
+<!--        select * from bill-->
+<!--        <where>-->
+<!--            <if test="startnum!=null and startnum!=''">-->
+<!--                startnum LIKE CONCAT('%',#{startnum},'%')-->
+<!--            </if>-->
+<!--            <if test="endnum!=null and endnum!=''">-->
+<!--                AND endnum LIKE CONCAT('%',#{endnum},'%')-->
+<!--            </if>-->
+<!--            <if test="batch!=null and batch!=''">-->
+<!--                AND batch LIKE CONCAT('%',#{batch},'%')-->
+<!--            </if>-->
+<!--            <if test="opera!=null and opera!=''">-->
+<!--                AND opera LIKE CONCAT('%',#{opera},'%')-->
+<!--            </if>-->
+<!--            <if test="hname!=null and hname!=''">-->
+<!--                AND hname LIKE CONCAT('%',#{hname},'%')-->
+<!--            </if>-->
+<!--            <if test="did!=null and did!=''">-->
+<!--                AND did LIKE CONCAT('%',#{did},'%')-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+
+
+</mapper>

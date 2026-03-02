@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.PaymentMapper">
+    <select id="findbypage" resultType="cn.neusoft.domain.fenzhan.Payment">
+        select * from order_info_all
+        <where>
+            <if test="cname!=null and cname!=''">
+                p_name=#{cname}
+            </if>
+            <if test="start!=null">
+                AND order_info_all.o_date>#{start}
+            </if>
+            <if test="end!=null">
+                AND o_date&lt;=#{end}
+            </if>
+        </where> limit #{startIndex},#{pageSize}
+    </select>
+    <select id="findbypage1" resultType="cn.neusoft.domain.fenzhan.Payment1">
+        select a.*,b.o_date from order_info_return a,order_info_all b
+        <where>
+            <if test="true">
+                a.p_name=#{cname}
+            </if>
+            <if test="true">
+                and a.o_l_id=b.o_id
+            </if>
+            <if test="start!=null">
+                and b.o_date>#{start}
+            </if>
+            <if test="end!=null">
+                and #{end}>b.o_date
+            </if>
+        </where> limit #{startIndex},#{pageSize}
+    </select>
+    <select id="findname" resultType="String">
+        select cname from kufang_goods where first_classification=#{class1}
+    </select>
+
+    <select id="findclass" resultType="String">
+        select first_classification from kufang_goods
+    </select>
+</mapper>

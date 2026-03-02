@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.CustomerMapper">
+<!--    <insert id="add" parameterType="cn.neusoft.domain.CustomerInfo" useGeneratedKeys="true" keyColumn="c_id" keyProperty="c_id">-->
+    <insert id="add" parameterType="cn.neusoft.domain.CustomerInfo">
+    insert into client_info(c_id,c_name,c_identity,c_orgName,c_landline,c_mTele,c_state)
+        values(#{c_id},#{c_name},#{c_identity},#{c_orgName},#{c_landline},#{c_mTele},#{c_state})
+    </insert>
+
+    <delete id="delete">
+        delete from client_info where c_id=#{c_id}
+    </delete>
+
+    <update id="update" parameterType="cn.neusoft.domain.CustomerInfo">
+        update client_info
+        set c_name=#{c_name},c_identity=#{c_identity},c_orgName=#{c_orgName},c_landline=#{c_landline},c_mTele=#{c_mTele}
+        where c_id=#{c_id}
+    </update>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.CustomerInfo">
+        select * from client_info
+        <where>
+            <if test="c_mTele!=null and c_mTele!=''">
+                c_mTele LIKE CONCAT('%',#{c_mTele},'%')
+            </if>
+            <if test="c_name!=null and c_name!=''">
+                AND c_name LIKE CONCAT('%',#{c_name},'%')
+            </if>
+            <if test="c_identity!=null and c_identity!=''">
+                AND c_identity LIKE CONCAT('%',#{c_identity},'%')
+            </if>
+        </where> order by c_id
+    </select>
+
+    <select id="findId" resultType="cn.neusoft.domain.CustomerInfo">
+        select * from client_info
+        where c_id=#{c_id}
+    </select>
+
+    <select id="findById" resultType="cn.neusoft.domain.order.OrderAll">
+        select * from order_info_all where c_id=#{c_id} order by o_date
+    </select>
+
+
+<!--    <select id="findbycondition" resultType="cn.neusoft.domain.fenzhan.Bill">-->
+<!--        select * from bill-->
+<!--        <where>-->
+<!--            <if test="startnum!=null and startnum!=''">-->
+<!--                startnum LIKE CONCAT('%',#{startnum},'%')-->
+<!--            </if>-->
+<!--            <if test="endnum!=null and endnum!=''">-->
+<!--                AND endnum LIKE CONCAT('%',#{endnum},'%')-->
+<!--            </if>-->
+<!--            <if test="batch!=null and batch!=''">-->
+<!--                AND batch LIKE CONCAT('%',#{batch},'%')-->
+<!--            </if>-->
+<!--            <if test="opera!=null and opera!=''">-->
+<!--                AND opera LIKE CONCAT('%',#{opera},'%')-->
+<!--            </if>-->
+<!--            <if test="hname!=null and hname!=''">-->
+<!--                AND hname LIKE CONCAT('%',#{hname},'%')-->
+<!--            </if>-->
+<!--            <if test="did!=null and did!=''">-->
+<!--                AND did LIKE CONCAT('%',#{did},'%')-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+
+
+</mapper>

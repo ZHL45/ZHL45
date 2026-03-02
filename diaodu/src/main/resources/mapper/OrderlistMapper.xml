@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.OrderlistMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.Bill">
+        insert into bill values(#{startnum},#{endnum},#{batch},#{opera},#{hname},#{did})
+    </insert>
+
+    <delete id="delete">
+        delete from bill where startnum=#{startnum} and endnum=#{endnum}
+    </delete>
+
+    <select id="show" resultType="cn.neusoft.domain.DiaoduShowXiangqing">
+        select o_id,p_type,c_name,o_state,o_date,op_id luruyuan_id,p_name,p_number,p_amount,o_receiver,o_address,o_recPhone, o_postcode,o_invoice,o_remark,o_substation suoshufz from order_info_all
+        where order_info_all.o_id=#{oid}
+    </select>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.DiaoduCulue">
+
+        select o_id, p_name,o_afterSales order_sort,o_state,op_id keyboarder,p_number,o_substation fenzhan from order_info_all
+        <where>
+
+            <if test="o_sort!=null and o_sort!=''">
+                AND o_afterSales LIKE CONCAT('%',#{o_sort},'%')
+            </if>
+            <if test="startdate!=null and startdate!=''">
+                AND o_date&gt;#{startdate}
+            </if>
+            <if test="finishdate!=null and finishdate!=''">
+                AND o_date&lt;#{finishdate}
+            </if>
+        </where>
+    </select>
+
+    <update id="shoudong">
+        update order_info_all set o_substation=#{fzname}
+        where o_id=#{p_id}
+    </update>
+
+    <update id="autoDiaodu">
+        UPDATE order_info_all
+        SET o_substation = CONCAT(SUBSTRING(o_address, 4, 2), '分站')
+        where o_state='可调度'
+    </update>
+
+    <update id="autoDiaodu2">
+        UPDATE order_info_all
+        SET o_substation = NULL
+        where o_state='可分配'
+    </update>
+
+    <delete id="shanchu">
+        delete from shangpin_diaobo;
+    </delete>
+
+    <insert id="fuzhi">
+        INSERT INTO shangpin_diaobo (d_id,chuku_kufang,ruku_kufang, p_sort,p_name,unit,o_date,diaobo_num)
+        SELECT o_id,'中心库房',o_substation,p_type,p_name,o_state,o_date,p_amount
+        FROM order_info_all where o_state='可调度';
+    </insert>
+
+    <select id="findbycondition" resultType="cn.neusoft.domain.Bill">
+        select * from bill
+        <where>
+            <if test="startnum!=null and startnum!=''">
+                startnum LIKE CONCAT('%',#{startnum},'%')
+            </if>
+            <if test="endnum!=null and endnum!=''">
+                AND endnum LIKE CONCAT('%',#{endnum},'%')
+            </if>
+            <if test="batch!=null and batch!=''">
+                AND batch LIKE CONCAT('%',#{batch},'%')
+            </if>
+            <if test="opera!=null and opera!=''">
+                AND opera LIKE CONCAT('%',#{opera},'%')
+            </if>
+            <if test="hname!=null and hname!=''">
+                AND hname LIKE CONCAT('%',#{hname},'%')
+            </if>
+            <if test="did!=null and did!=''">
+                AND did LIKE CONCAT('%',#{did},'%')
+            </if>
+        </where>
+    </select>
+    <select id="search" resultType="cn.neusoft.domain.DiaoduShowXiangqing">
+        select Chuku_order.o_id,order_sort,o_state,o_date,keyboarder,p_name,p_number,o_receiver,o_address,o_recPhone, o_postcode,substation,o_invoice,remark,station
+        from order_info_all, Chuku_order
+        where order_info_all.o_id = Chuku_order.o_id and Chuku_order.o_id=#{id}
+
+    </select>
+
+    <select id="get" resultType="cn.neusoft.domain.Diaobo_order">
+        select o_id d_id,o_substation ruku_kufang,p_type p_sort,p_name,p_number diaobo_num,
+        o_Munit unit,o_date from order_info_all
+        where o_id=#{p_id}
+    </select>
+
+    <insert id="insert" parameterType="cn.neusoft.domain.Diaobo_order">
+        insert into shangpin_diaobo values (#{d_id},#{chuku_kufang},#{ruku_kufang},#{p_sort},
+        #{p_name},#{unit},#{o_date},#{diaobo_num})
+    </insert>
+
+    <select id="check2" resultType="Integer">
+        select count(*) from shangpin_diaobo where d_id=#{d_id}
+    </select>
+
+    <select id="deleteid" resultType="Integer">
+        delete from shangpin_diaobo where d_id=#{d_id}
+    </select>
+
+    <update id="editO_state">
+        update order_info_all set o_state='可分配'
+        where o_id=#{o_id}
+    </update>
+
+    <update id="autoeditO_state">
+        update order_info_all set o_state='可分配'
+        where o_state='可调度'
+    </update>
+
+    <update id="redoAutoeditO_state">
+        update order_info_all set o_state='可调度'
+        where o_state='可分配'
+    </update>
+</mapper>

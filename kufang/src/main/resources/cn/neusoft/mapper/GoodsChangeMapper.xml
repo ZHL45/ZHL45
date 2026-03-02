@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.GoodsChangeMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.kufang.Goods_Change">
+        insert into kufang_change values (#{allocateid}, #{cid}, #{cname}, #{measure_unit}, #{cnum}, #{tid}, #{date})
+    </insert>
+
+    <insert id="add_follow1" parameterType="cn.neusoft.domain.kufang.Goods_Change">
+        insert into kufang_vo values (#{allocateid}, #{cid}, #{cname}, #{measure_unit}, #{cnum}, #{tid}, #{date},"中心入")
+    </insert>
+    <update id="add_follow2">
+        update kufang_goods1 set is_jinhuo="已进货" where o_id=#{integer}
+    </update>
+
+
+    <insert id="add2" parameterType="cn.neusoft.domain.kufang.Goods_Change">
+        insert into kufang_change values(#{allocateid},#{cid},#{cname},#{measure_unit},#{cnum},#{tid},#{date})
+
+    </insert>
+    <update id="add2_follow1">
+        update kufang_vo set station="中心出" where allocateid=#{allocateid}
+    </update>
+
+
+    <update id="updatestate">
+        update order_info_all set o_state="中心库房出库" where o_id=#{integer}
+    </update>
+
+<!--中心库房的两个模糊+分页查询-->
+    <select id="findbypage" resultType="cn.neusoft.domain.kufang.KufangGoods1">
+        SELECT * FROM kufang_goods1 WHERE is_jinhuo is NULL or is_jinhuo='未进货'
+    </select>
+
+    <select id="findbypage2" resultType="cn.neusoft.domain.kufang.Goods_Change">
+        select * from (select * from kufang_vo
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND #{end}>=date
+            </if>
+            <if test="true">
+                AND cnum>0
+            </if>
+            <if test="true">
+                AND kufang_vo.station="中心入"
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findbypage3" resultType="cn.neusoft.domain.kufang.Goods_Change">
+        select * from (select * from kufang_vo
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND #{end}>=date
+            </if>
+<!--            <if test="true">-->
+<!--                AND 0>cnum-->
+<!--            </if>-->
+            <if test="true">
+                AND kufang_vo.station="中心出"
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+
+<!--    <select id="findbypage废" resultType="cn.neusoft.domain.kufang.Goods_Change">-->
+<!--        select * from (select * from kufang_vo-->
+<!--        <where>-->
+<!--            <if test="start!=null">-->
+<!--                date>=#{start}-->
+<!--            </if>-->
+<!--            <if test="end!=null">-->
+<!--                AND #{end}>=date-->
+<!--            </if>-->
+<!--&lt;!&ndash;            <if test="Type!=null and Type!=''">&ndash;&gt;-->
+<!--&lt;!&ndash;                AND cname LIKE CONCAT('%',#{Type},'%')&ndash;&gt;-->
+<!--&lt;!&ndash;            </if>&ndash;&gt;-->
+<!--            <if test="true">-->
+<!--                AND kufang_vo.station="分站入"-->
+<!--            </if>-->
+<!--        </where>) cond limit #{startIndex},#{pageSize}-->
+<!--    </select>-->
+<!--打印功能尚需完善-->
+<!--    <select id="print" resultType="cn.neusoft.domain.kufang.Goods_Change">-->
+<!--        select a.cid,a.cname,a.original_price,b.cnum,a.factory,a.note,b.cnum,b.cnum*a.original_price,b.date from kufang_goods a,(-->
+<!--        select * from (select * from kufang_change-->
+<!--        <where>-->
+<!--            <if test="start!=null">-->
+<!--                date>=#{start}-->
+<!--            </if>-->
+<!--            <if test="end!=null">-->
+<!--                AND #{end}>=date-->
+<!--            </if>-->
+<!--            <if test="Type!=null and Type!=''">-->
+<!--                AND cname LIKE CONCAT('%',#{Type},'%')-->
+<!--            </if>-->
+<!--        </where>) cond limit #{startIndex},#{pageSize}-->
+<!--        ) b where a.cid=b.cid-->
+<!--    </select>-->
+    <select id="find" resultMap="test">
+        select * from kufang_goods a,kufang_change b where b.allocateid=#{allocateid} and a.cid=b.cid
+    </select>
+    <resultMap id="test" type="cn.neusoft.domain.kufang.ChuKuDan">
+        <id column="allocateid" property="allocateid"/>
+        <result column="cid" property="cid"/>
+        <result column="cname" property="cname"/>
+        <result column="date" property="date"/>
+        <result column="cnum" property="cnum"/>
+        <association property="goods" javaType="cn.neusoft.domain.kufang.Goods">
+            <result column="remark" property="note"/>
+            <result column="factory" property="factory"/>
+            <result column="original_price" property="original_price"/>
+            <result column="factory" property="factory"/>
+        </association>
+    </resultMap>
+
+    <select id="print" resultType="cn.neusoft.domain.kufang.Kufang_change1">
+        select * from (select * from kufang_change1
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND #{end}>=date
+            </if>
+            <if test="name!=null and name!=''">
+                AND cname LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="station!=null and station!=''">
+                AND fzname LIKE CONCAT('%',#{station},'%')
+            </if>
+            <if test="true">
+                AND 0 >cnum
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findgoods" resultType="cn.neusoft.domain.kufang.Goods">
+        select * from kufang_goods where cid=#{cid}
+    </select>
+
+
+    <select id="print1" resultType="cn.neusoft.domain.kufang.ChuKuDan">
+<!--        select * from kufang_vo where station="分站入" or station="中心出"-->
+
+        select * from (select * from kufang_vo
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND #{end}>=date
+            </if>
+            <!--            <if test="true">-->
+            <!--                AND 0>cnum-->
+            <!--            </if>-->
+            <if test="name!=null and name!=''">
+                AND cname LIKE CONCAT('%',#{name},'%')
+            </if>
+<!--            <if test="true">-->
+<!--                AND 0 >cnum-->
+<!--            </if>-->
+            <if test="true">
+                AND (station="分站入" or station="中心出")
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findc" resultType="String">
+        select c_name from order_info_all where o_id=#{o_id}
+    </select>
+
+</mapper>

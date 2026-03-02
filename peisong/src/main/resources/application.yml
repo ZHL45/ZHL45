@@ -1,0 +1,21 @@
+server:
+  port: 3015
+spring:
+  datasource:
+    url: jdbc:mysql://39.104.137.220:3306/logistics_db
+    username: shixun
+    password: shixun
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: peisong-center
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.182.6:8848
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*pper.xml
+logging:
+  level:
+    cn.neusoft: debug

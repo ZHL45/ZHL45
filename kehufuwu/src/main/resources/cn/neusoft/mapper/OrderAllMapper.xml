@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.OrderAllMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.order.OrderAll" useGeneratedKeys="true" keyColumn="o_id" keyProperty="o_id">
+        insert into
+        order_info_all(o_id,c_id,op_id,c_name,p_type,p_subtype,p_name,p_number,p_amount,o_date,
+        o_address,o_state,o_Munit,o_Uprice,p_ins,o_remark,o_afterSales,o_receiver,o_recPhone,o_postcode,o_invoice)
+        values(#{o_id},#{c_id},#{op_id},#{c_name},#{p_type},#{p_subtype},#{p_name},#{p_number},
+        #{p_amount},#{o_date},#{o_address},#{o_state},#{o_Munit},#{o_Uprice},#{p_ins},
+        #{o_remark},#{o_afterSales},#{o_receiver},#{o_recPhone},#{o_postcode},#{o_invoice})
+    </insert>
+
+<!--    检查是否缺货-->
+    <select id="isLack">
+        select
+        p_name from jinhuodan,
+        (select * from
+            (select kufang_total.cnum,new2.*  from kufang_total,
+                (select order_info_lack.p_number lack_number,new1.* from order_info_lack ,
+                    (select cid,new.p_name,measure_unit,date,p_type,yujing from zhongxin_yujing,
+                        (select distinct kufang_change.cid ,p_name,measure_unit,date,p_type
+                            from kufang_change,order_info_all
+                        where   kufang_change.cname=order_info_all.p_name ) new
+                    where new.p_name=zhongxin_yujing.p_name) new1
+                where order_info_lack.p_name=new1.p_name) new2
+            where kufang_total.cid= new2.cid and cnum&lt;new2.yujing) new5
+        <where>
+            <if test="p_name!=null and p_name!=''">
+                p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+        </where>) new6
+        where new6.p_name=jinhuodan.p_name
+
+    </select>
+
+    <insert id="orderExchange" parameterType="cn.neusoft.domain.order.OrderExchange">
+        insert into order_info_exchange
+        values(#{o_id},#{o_l_id},#{c_name},#{p_name},#{p_number},#{p_amount},#{o_reason},#{o_remark},#{o_address},#{o_receiver},#{o_recPhone},#{o_state})
+    </insert>
+
+    <insert id="orderReturn" parameterType="cn.neusoft.domain.order.OrderReturn">
+        insert into order_info_return
+        values(#{o_id},#{o_l_id},#{c_name},#{p_name},#{p_number},#{p_amount},#{o_reason},#{o_address},#{o_state})
+    </insert>
+
+    <insert id="orderLack" parameterType="cn.neusoft.domain.order.OrderLack">
+        insert into order_info_lack(o_id,p_name,p_number,o_state)
+        values(#{o_id},#{p_name},#{p_number},#{o_state})
+    </insert>
+
+    <delete id="delete">
+        delete from order_info_all where o_id=#{o_id}
+    </delete>
+
+    <update id="update">
+        update order_info_all
+        set o_remark=#{o_remark},o_address=#{o_address},o_receiver=#{o_receiver},o_recPhone=#{o_recPhone}
+        where o_id=#{o_id}
+    </update>
+
+    <update id="changeAfterSales" parameterType="cn.neusoft.domain.order.OrderAll">
+        update order_info_all
+        set o_afterSales=#{o_afterSales}
+        where o_id=#{o_id}
+    </update>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.order.OrderAll">
+        select * from order_info_all
+        <where>
+            <if test="c_name!=null and c_name!=''">
+                c_name LIKE CONCAT('%',#{c_name},'%')
+            </if>
+            <if test="p_name!=null and p_name!=''">
+                AND p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+            <if test="o_id!=null and o_id!=''">
+                AND o_id LIKE CONCAT('%',#{o_id},'%')
+            </if>
+        </where> order by o_id
+    </select>
+
+<!--    <select id="findbycondition" resultType="cn.neusoft.domain.fenzhan.Bill">-->
+<!--        select * from bill-->
+<!--        <where>-->
+<!--            <if test="startnum!=null and startnum!=''">-->
+<!--                startnum LIKE CONCAT('%',#{startnum},'%')-->
+<!--            </if>-->
+<!--            <if test="endnum!=null and endnum!=''">-->
+<!--                AND endnum LIKE CONCAT('%',#{endnum},'%')-->
+<!--            </if>-->
+<!--            <if test="batch!=null and batch!=''">-->
+<!--                AND batch LIKE CONCAT('%',#{batch},'%')-->
+<!--            </if>-->
+<!--            <if test="opera!=null and opera!=''">-->
+<!--                AND opera LIKE CONCAT('%',#{opera},'%')-->
+<!--            </if>-->
+<!--            <if test="hname!=null and hname!=''">-->
+<!--                AND hname LIKE CONCAT('%',#{hname},'%')-->
+<!--            </if>-->
+<!--            <if test="did!=null and did!=''">-->
+<!--                AND did LIKE CONCAT('%',#{did},'%')-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.ProductDiaoboMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.Diaobo_order">
+        insert into kufang_change values(#{allocateid},#{cnum},#{cname},#{measure_unit},#{diaobo_amount},#{first_classification},#{date})
+    </insert>
+
+    <delete id="delete">
+        delete from shangpin_diaobo where d_id=#{d_id}
+    </delete>
+
+    <select id="show" resultType="cn.neusoft.domain.DiaoduShowXiangqing">
+        select Chuku_order.o_id,order_sort,o_state,o_date,keyboarder,p_name,p_number,o_receiver,o_address,o_recPhone, o_postcode,substation,o_invoice,remark,station from order_info_all, Chuku_order
+        where order_info_all.o_id = Chuku_order.o_id =#{id}
+    </select>
+
+    <select id="search" resultType="cn.neusoft.domain.Diaobo_order">
+        select allocateid,first_classification,kufang_goods.cname,kufang_total.cnum,kufang_change.cnum diaobo_amount,kufang_goods.measure_unit,date
+        from kufang_change,kufang_goods,kufang_total where kufang_change.cid=kufang_goods.cid=kufang_total.cid and allocateid=#{id}
+
+    </select>
+
+    <select id="edit" resultType="Integer">
+
+    </select>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.Diaobo_order">
+
+        select * from shangpin_diaobo
+        <where>
+
+            <if test="diaobo_id!=null and diaobo_id!=''">
+                AND d_id LIKE CONCAT('%',#{diaobo_id},'%')
+            </if>
+
+        </where>
+    </select>
+</mapper>

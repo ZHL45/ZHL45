@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.KufangfzbackMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.kufang.Kufangfzback">
+        insert into kufang_fzback values(#{allocateid},#{cid},#{cname},#{cunit},#{cnum},#{date},#{type},1)
+    </insert>
+    <delete id="add_follow">
+        delete from order_info_return_copy1 where o_id=#{o_id}
+    </delete>
+
+    <insert id="add2" parameterType="cn.neusoft.domain.kufang.Kufangfzback">
+        insert into kufang_zxback values(#{allocateid},#{cid},#{cname},#{cunit},#{cnum},#{date},#{type},1)
+    </insert>
+    <update id="add2_follow">
+        update kufang_fzback set test=2 where allocateid=#{allocateid}
+    </update>
+
+    <insert id="add3" parameterType="cn.neusoft.domain.kufang.Kufangfzback">
+        insert into kufang_zxback2 values(#{allocateid},#{cid},#{cname},#{cunit},#{cnum},#{date},#{type},1)
+    </insert>
+    <update id="add3_follow">
+        update kufang_zxback set test=2 where allocateid=#{allocateid}
+    </update>
+
+    <update id="add_follow1">
+        update kufang_vo set station="分站入" where allocateid=#{allocateid}
+    </update>
+
+
+    <update id="add4">
+        update kufang_zxback2 set test=2 where allocateid=#{allocateid}
+    </update>
+    <select id="findbypage" resultType="cn.neusoft.domain.kufang.Kufangfzback">
+        select * from (select * from kufang_fzback
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND date&lt;=#{end}
+            </if>
+            <if test="Type!=null and Type!=''">
+                AND type LIKE CONCAT('%',#{Type},'%')
+            </if>
+            <if test="true">
+                kufang_fzback.test=1
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findbypage2" resultType="cn.neusoft.domain.kufang.Kufangfzback">
+        select * from (select * from kufang_zxback
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND date&lt;=#{end}
+            </if>
+            <if test="Type!=null and Type!=''">
+                AND type LIKE CONCAT('%',#{Type},'%')
+            </if>
+            <if test="true">
+                kufang_zxback.test=1
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findbypage3" resultType="cn.neusoft.domain.kufang.Kufangfzback">
+        select * from (select * from kufang_zxback2
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND date&lt;=#{end}
+            </if>
+            <if test="Type!=null and Type!=''">
+                AND type LIKE CONCAT('%',#{Type},'%')
+            </if>
+            <if test="true">
+                kufang_zxback2.test=1
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+
+    <select id="findbypage4" resultType="cn.neusoft.domain.kufang.Kufangfzback">
+        select * from (select * from kufang_zxback2
+        <where>
+            <if test="start!=null">
+                date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND date&lt;=#{end}
+            </if>
+            <if test="Type!=null and Type!=''">
+                AND type LIKE CONCAT('%',#{Type},'%')
+            </if>
+            <if test="true">
+                kufang_zxback2.test=2
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findcid" resultType="Integer">
+        select cid from kufang_goods where cname=#{cname}  GROUP BY cid,cname
+    </select>
+
+    <select id="findcunit" resultType="String">
+        select measure_unit from kufang_goods where cname=#{cname} GROUP BY measure_unit,cname
+    </select>
+
+    <select id="findclass" resultType="String">
+        select first_classification from kufang_goods where cname=#{cname} GROUP BY first_classification,cname
+    </select>
+
+    <select id="finddate" resultType="Date">
+        select o_date from order_info_all where order_info_all.o_id=#{o_id}
+    </select>
+
+    <update id="uptui">
+        update kufang_goods1 set is_tuihuo="已退货",tuihuo_num=#{cnum} where o_id=#{o_id}
+    </update>
+
+</mapper>

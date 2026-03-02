@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.FzAndDhMapper">
+    <!--    <select id="findByPage" resultType="cn.neusoft.domain.Dingdanpaihang">-->
+    <!--        select new.p_name,count(*)*10 count from-->
+    <!--            (select p_name,o_date from order_info_all-->
+    <!--            <where>-->
+    <!--                <if test="finishdate!=null">-->
+    <!--                    AND o_date&gt;#{startdate}-->
+    <!--                </if>-->
+    <!--                <if test="startdate!=null">-->
+    <!--                    AND o_date&lt;#{finishdate}-->
+    <!--                </if>-->
+    <!--            </where>) new-->
+    <!--            group by p_name-->
+    <!--        order by count DESC;-->
+    <!--    </select>-->
+
+    <select id="findByPage" resultType="cn.neusoft.domain.Dingdanpaihang">
+        select p_name,p_number count from order_info_all
+        <where>
+            <if test="finishdate!=null">
+                AND o_date&gt;#{startdate}
+            </if>
+            <if test="startdate!=null">
+                AND o_date&lt;#{finishdate}
+            </if>
+        </where>
+        order by p_name DESC;
+    </select>
+</mapper>

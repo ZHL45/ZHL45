@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.KufangMapper">
+
+    <delete id="delete">
+        delete from peisong_kufang where ku_name=#{cname}
+    </delete>
+
+    <select id="kucun" resultType="cn.neusoft.domain.KucunTuihuo">
+        select * from (SELECT new2.fzname,cname, SUM(tuihuoNum) AS total_tuihuonum, SUM(yifenpeiNum) AS total_yifenpeiNum, cid,total
+        FROM (select new.fzname,kufang_fzback.cname,kufang_fzback.cid,kufang_fzback.cnum tuihuoNum,new.yifenpeiNum,new.total from kufang_fzback, (select kufang_change1.fzname,kufang_change1.cname,kufang_change1.cnum yifenpeiNum,kufang_total.cid,kufang_total.cnum total from kufang_total,kufang_change1
+        where kufang_total.cid=kufang_change1.cid ) new
+        where kufang_fzback.cid = new.cid) new2
+        GROUP BY cname, cid,total,fzname) new3
+        <where>
+            <if test="product_name!=null and product_name!=''">
+                AND cname LIKE CONCAT('%',#{product_name},'%')
+            </if>
+            <if test="kufang_name!=null and kufang_name!=''">
+                AND fzname LIKE CONCAT('%',#{kufang_name},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="search" resultType="cn.neusoft.domain.Peisong_ku">
+        select * from peisong_kufang where ku_name=#{cname}
+
+    </select>
+
+    <update id="edit" parameterType="cn.neusoft.domain.Peisong_ku">
+        update peisong_kufang
+        set address=#{address},administer=#{administer},jibie=#{jibie}
+        where ku_name=#{ku_name}
+    </update>
+
+    <insert id="add" parameterType="cn.neusoft.domain.Peisong_ku">
+        insert into peisong_kufang values(#{ku_name},#{address},#{administer},#{jibie},#{yujing},#{maxStore})
+    </insert>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.Peisong_ku">
+
+        select * from peisong_kufang
+        <where>
+
+            <if test="ku_name!=null and ku_name!=''">
+                AND ku_name LIKE CONCAT('%',#{ku_name},'%')
+            </if>
+
+        </where> order by maxStore
+    </select>
+</mapper>

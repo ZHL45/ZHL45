@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.QuehuodiaohuoMapper">
+    <delete id="deleteyujing">
+        delete from zhongxin_yujing
+    </delete>
+
+    <delete id="deletelack">
+        delete from order_info_lack
+    </delete>
+
+    <insert id="addlack1">
+        insert into order_info_lack (o_id,p_name,o_state) select o_id,p_name,o_state from order_info_all
+    </insert>
+
+    <update id="addlack2">
+        UPDATE order_info_lack
+        SET p_number = (
+        SELECT p_number
+        FROM (select p_name,yujing,cnum,(cnum-yujing) as p_number from (select zhongxin_yujing.p_name,yujing,cnum from zhongxin_yujing,kufang_total,kufang_goods
+        where zhongxin_yujing.p_name=kufang_goods.cname and  kufang_goods.cid=kufang_total.cid) new) table1
+        WHERE table1.p_name = order_info_lack.p_name
+        )
+    </update>
+    <update id="setquehuo">
+        UPDATE order_info_lack
+        SET o_state = '缺货'
+        WHERE p_number&lt;0
+    </update>
+
+    <update id="fuzhiyujing">
+        INSERT INTO zhongxin_yujing (p_name, yujing, maxStore)
+        SELECT p_name, yujing, 2000
+        FROM (select p_name,SUM(p_number) yujing from order_info_all
+        group by p_name) new
+    </update>
+
+    <insert id="jinhuodan">
+        insert into kufang_goods1 values (#{o_id},#{cid},#{cname},#{first_classification},#{second_classification},
+        #{measure_unit},#{jinhuo_num},#{offerer},#{original_price},#{discount},#{cost},#{model},
+        #{factory},#{period},#{if_back},#{if_change},#{remark},#{is_jinhuo},#{is_jiesuan},#{is_tuihuo},#{tuihuo_num})
+    </insert>
+
+    <update id="set">
+        update order_info_lack
+        set o_state = '已补货'
+        where o_id=#{o_id}
+    </update>
+    <update id="setkufang">
+        update kufang_total
+        set cnum = cnum+#{jinhuo_num}
+        where cid=#{cid}
+    </update>
+    <select id="selectByName" resultType="cn.neusoft.query.JinhuoQuery">
+        select * from kufang_goods where cname=#{cname}
+    </select>
+
+
+    <select id="findByPage" resultType="cn.neusoft.domain.Tuihuodan">
+        select o_id,xiancun_num,offerer,p_id,p_name,oReturntuihuo_num from (select * from (select o_id,xiancun_num,offerer,p_id,p_name,jinhuo_num oReturntuihuo_num,period from (select o_state,o_id,xiancun_num,offerer,p_id,p_name,jinhuo_num,period,oReturntuihuo_num from (select o_state,p_number oReturntuihuo_num ,new3.* from order_info_return,(select cnum xiancun_num, new.* from kufang_total,(select o_id,offerer,period,cid p_id,cname p_name,jinhuo_num from kufang_goods1
+        ) new
+        where new.p_id=kufang_total.cid) new3
+        where new3.p_name=order_info_return.p_name) new2
+        ) new4
+        where o_state!='已完成') new6
+        <where>
+            <if test="offerer!=null and offerer!=''">
+                offerer LIKE CONCAT('%',#{offerer},'%')
+            </if>
+            <if test="p_id!=null and p_id!=''">
+                AND p_id LIKE CONCAT('%',#{p_id},'%')
+            </if>
+            <if test="startdate!=null and startdate!=''">
+                AND period&gt;#{startdate}
+            </if>
+            <if test="finishdate!=null and finishdate!=''">
+                AND period&lt;#{finishdate}
+            </if>
+        </where>) new7
+    </select>
+
+    <select id="lackFindByPage" resultType="cn.neusoft.domain.Quehuojinhuo">
+        select * from (select * from (select order_info_lack.o_state,order_info_lack.o_id,kufang_goods.cid,p_type,order_info_all.p_name,cnum,zhongxin_yujing.yujing,order_info_lack.p_number lack_number ,o_Munit measure_unit,o_date as date from order_info_all,kufang_goods,kufang_total,zhongxin_yujing,order_info_lack
+        where kufang_goods.cname=order_info_all.p_name and kufang_goods.cid=kufang_total.cid and zhongxin_yujing.p_name=kufang_goods.cname and order_info_lack.o_id=order_info_all.o_id) new
+        where new.o_state='缺货'
+        ) new3
+
+        <where>
+
+            <if test="p_name!=null and p_name!=''">
+                p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+
+        </where>
+
+    </select>
+
+
+    <update id="tuihuo">
+        update kufang_goods1 set tuihuo_num=#{tuihuo_num}
+        where o_id=#{o_id}
+    </update>
+
+    <update id="editState">
+        update order_info_return set o_state='已完成'
+        where o_l_id=#{o_id}
+    </update>
+
+    <select id="selectTuiNum" resultType="Integer">
+        select p_number from order_info_return
+        where p_name=#{p_name}
+    </select>
+
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.OffererMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.Offerer">
+        insert into offerer values(#{o_name},#{address},#{contact},#{phone},#{kaihuhang},#{bank_id},#{fax},#{code},#{faren},#{remark})
+    </insert>
+
+    <delete id="delete">
+        delete from offerer where o_name=#{cname}
+    </delete>
+
+
+    <select id="search" resultType="cn.neusoft.domain.Offerer">
+        select * from offerer where o_name=#{cname}
+
+    </select>
+
+    <select id="edit" resultType="Integer">
+        update offerer
+        set address=#{address},contact=#{contact},phone=#{phone},kaihuhang=#{kaihuhang},bank_id=#{bank_id},
+        fax=#{fax},code=#{code},faren=#{faren},remark=#{remark}
+        where o_name =#{o_name}
+    </select>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.Offerer">
+
+        select * from offerer
+        <where>
+
+            <if test="o_name!=null and o_name!=''">
+                AND o_name LIKE CONCAT('%',#{o_name},'%')
+            </if>
+
+        </where>
+    </select>
+</mapper>

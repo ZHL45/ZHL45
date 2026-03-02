@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.BillInfoMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.BillInfo">
+        insert into bill_info(in_batch,in_startNumber,in_endNumber)
+        values(#{in_batch},#{in_startNumber},#{in_endNumber})
+    </insert>
+
+    <select id="findBatch" resultType="java.lang.Integer">
+        select in_batch from bill_info where in_batch=#{in_batch}
+    </select>
+
+    <select id="findByBatch" resultType="cn.neusoft.domain.fenzhan.Bill">
+        select * from fenzhan_bill where batch=#{batch}
+    </select>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.BillInfo">
+        select * from bill_info
+        <where>
+            <if test="in_batch!=null and in_batch!=''">
+                in_batch LIKE CONCAT('%',#{in_batch},'%')
+            </if>
+        </where> order by in_batch
+    </select>
+
+</mapper>

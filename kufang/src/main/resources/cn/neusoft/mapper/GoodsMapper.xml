@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.GoodsMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.kufang.Goods">
+        insert into kufang_goods values(#{cid},#{cname},#{first_classification},#{second_classification},#{measure_unit},#{cnum},#{offerer},#{note},#{original_price},#{discount},#{cost},#{model},#{factory},#{period},#{if_back},#{if_change},#{type},#{time})
+    </insert>
+
+    <select id="findbyid" resultType="cn.neusoft.domain.kufang.Goods">
+        select * from kufang_goods where cid=#{cid}
+    </select>
+
+    <update id="update">
+        update kufang_goods set cnum=#{cnum} where cid=#{cid}
+    </update>
+
+    <select id="findbypage" resultType="cn.neusoft.domain.kufang.Goods">
+        select * from (select * from kufang_goods
+        <where>
+            <if test="start!=null">
+                time>=#{start}
+            </if>
+            <if test="end!=null">
+                AND time&lt;=#{end}
+            </if>
+            <if test="Type!=null and Type!=''">
+                AND Type LIKE CONCAT('%',#{Type},'%')
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+
+</mapper>

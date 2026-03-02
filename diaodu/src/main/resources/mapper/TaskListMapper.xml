@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.TaskListMapper">
+    <select id="findbypagediaodu" resultType="cn.neusoft.domain.fenzhan.TaskList2">
+        select o_id,c_name,o_address,p_name,p_number,o_date,o_afterSales,o_state from (select * from order_info_all
+        <where>
+            <if test="type!=null and type!=''">
+                AND o_afterSales =#{type}
+            </if>
+        </where>) new
+    </select>
+
+
+
+</mapper>

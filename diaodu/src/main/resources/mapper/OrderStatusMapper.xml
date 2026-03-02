@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.OrderStatusMapper">
+
+    <update id="edit" >
+        update order_info_all set o_state='可分配' where o_id=#{o_id}
+    </update>
+
+    <select id="search" resultType="cn.neusoft.domain.EditOrderStatus">
+        select p_name,o_id,c_name,p_amount,o_date,o_address,o_postcode,o_recPhone,o_state
+        from order_info_all where o_id=#{o_id}
+
+    </select>
+
+    <select id="check" resultType="Integer">
+        select count(*) from  order_info_all
+        where c_name=#{clientname} and o_state='缺货'
+
+    </select>
+
+    <select id="show" resultType="cn.neusoft.domain.Quehuofanhui">
+        select o_id, p_name,c_name,p_amount,o_date,o_state from order_info_all
+
+
+    </select>
+
+    <select id="findByPage1" resultType="cn.neusoft.domain.Quehuofanhui">
+
+        select p_name,o_id,c_name,p_amount,o_date,o_state
+        from order_info_all
+        where c_name=#{client_name} and o_state='缺货'
+        <where>
+
+            <if test="startdate!=null and startdate!=''">
+                AND o_date&gt;#{startdate}
+            </if>
+            <if test="finishdate!=null and finishdate!=''">
+                AND o_date&lt;finishdate
+            </if>
+        </where>
+    </select>
+
+    <select id="findByPage2" resultType="cn.neusoft.domain.Wuquehuo">
+
+        select client_info.c_name,c_id,c_mTele,c_identity,new.total_sum p_amount
+        from client_info,(SELECT c_name,SUM(p_amount) AS total_sum
+        FROM order_info_all
+        WHERE c_name = #{client_name}) new
+        where client_info.c_name=new.c_name
+        <where>
+            <if test="startdate!=null and startdate!=''">
+                AND o_date&gt;#{startdate}
+            </if>
+            <if test="finishdate!=null and finishdate!=''">
+                AND o_date&lt;finishdate
+            </if>
+        </where>
+    </select>
+</mapper>

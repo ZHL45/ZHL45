@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.LoginMapper">
+    <!--    <insert id="add" parameterType="cn.neusoft.domain.CustomerInfo" useGeneratedKeys="true" keyColumn="c_id" keyProperty="c_id">-->
+
+    <select id="findByAccount" resultType="java.lang.Integer">
+        select id from account_info where account=#{account}
+    </select>
+
+    <select id="findByPhone" resultType="java.lang.Integer">
+        select id from account_info where phoneNumber=#{phoneNumber}
+    </select>
+
+    <select id="loginByPsd" parameterType="cn.neusoft.domain.Account" resultType="cn.neusoft.domain.Account">
+        select account,password,phoneNumber,role
+        from account_info
+        where account=#{account} and password=#{password}
+    </select>
+
+</mapper>

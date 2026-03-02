@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.TaskListMapper">
+    <select id="findbypage" resultType="cn.neusoft.domain.fenzhan.TaskList">
+        select o_id,c_name,o_address,p_name,p_number,o_date,o_afterSales,o_state from (select * from order_info_all
+        <where>
+            <if test="start!=null">
+                o_date>=#{start}
+            </if>
+            <if test="end!=null">
+                AND o_date&lt;=#{end}
+            </if>
+            <if test="state!=null and state!=''">
+                AND o_state LIKE CONCAT('%',#{state},'%')
+            </if>
+            <if test="type!=null and type!=''">
+                AND o_afterSales =#{type}
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+
+    <select id="findbypage2" resultType="cn.neusoft.domain.fenzhan.TaskList">
+        select * from order_info_all <where>
+        <if test="true">
+            o_state="可分配"
+        </if>
+        <if test="type!=null and type!=''">
+            and o_afterSales=#{type}
+        </if>
+    </where>
+    </select>
+    <resultMap id="test" type="cn.neusoft.domain.fenzhan.TaskList">
+        <id column="o_id" property="o_id"/>
+        <result column="c_name" property="c_name"/>
+        <result column="o_address" property="o_address"/>
+        <result column="p_name" property="p_name"/>
+        <result column="p_number" property="p_number"/>
+        <result column="o_date" property="o_date"/>
+        <result column="o_state" property="o_state"/>
+        <result column="o_afterSales" property="o_afterSales"/>
+        <association property="deliver" javaType="cn.neusoft.domain.fenzhan.Deliver">
+            <id column="taskid" property="taskid"/>
+            <result column="postman" property="postman"/>
+            <result column="taskdate" property="taskdate"/>
+        </association>
+    </resultMap>
+    <select id="findbypage3" resultMap="test">
+        select * from (select o.o_id,o.c_name,o.o_address,o.o_date,
+        o.o_afterSales,b.postman,b.taskid,b.taskdate from fenzhan_deliver b inner join order_info_all o
+        on b.taskid=o.o_id
+        <where>
+        <if test="start!=null">
+            o_date>=#{start}
+        </if>
+        <if test="end!=null">
+            AND o_date&lt;=#{end}
+        </if>
+        <if test="pman!=null and pman!=''">
+            AND b.postman=#{pman}
+        </if>
+        <if test="type!=null and type!=''">
+            AND o.o_afterSales=#{type}
+        </if>
+    </where> limit #{startIndex},#{pageSize}) AS a
+    </select>
+
+    <select id="print" resultType="cn.neusoft.domain.fenzhan.OrderAll">
+        select * from order_info_all where o_id=#{o_id}
+    </select>
+
+    <select id="find12378" resultType="cn.neusoft.domain.fenzhan.OrderAll">
+        select * from order_info_all where o_id=#{o_id}
+    </select>
+
+    <select id="all" resultType="cn.neusoft.domain.fenzhan.OrderAll">
+        select * from order_info_all
+    </select>
+</mapper>

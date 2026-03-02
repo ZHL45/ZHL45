@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.Good1listMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.Shangpin1">
+        insert into kufang_goods values(#{cid},#{cname},#{first_classification},#{second_classification},#{measure_unit},
+        #{offerer},#{original_price},#{discount},#{cost},#{model},#{factory},#{period},#{if_back},#{if_change},#{remark})
+    </insert>
+
+    <update id="edit" parameterType="cn.neusoft.domain.Shangpin11">
+        update kufang_goods set first_classification=#{first_classification},
+        second_classification=#{second_classification},offerer=#{offerer} where cid=#{cid}
+    </update>
+    <delete id="delete" >
+        delete from kufang_goods where cid=#{cid}
+    </delete>
+
+    <select id="show" resultType="cn.neusoft.domain.DiaoduShowXiangqing">
+        select Chuku_order.o_id,order_sort,o_state,o_date,keyboarder,p_name,p_number,o_receiver,o_address,o_recPhone, o_postcode,substation,o_invoice,remark,station from order_info_all, Chuku_order
+        where order_info_all.o_id = Chuku_order.o_id =#{id}
+    </select>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.Shangpin1">
+
+        select * from kufang_goods
+        <where>
+
+            <if test="cname!=null and cname!=''">
+                AND cname LIKE CONCAT('%',#{cname},'%')
+            </if>
+
+        </where> order by cid
+    </select>
+
+    <select id="getAll" resultType="cn.neusoft.domain.Shangpin11">
+        select *
+        from kufang_goods
+
+    </select>
+
+
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.BillMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.fenzhan.Bill">
+        insert into fenzhan_bill values(#{startnum},#{endnum},#{batch},#{opera},#{hname},#{did},#{date})
+    </insert>
+
+
+    <delete id="delete">
+        delete from fenzhan_bill where startnum=#{startnum} and endnum=#{endnum} and batch=#{batch}
+    </delete>
+
+<!--分页+模糊搜索-->
+
+    <select id="findbypage" resultType="cn.neusoft.domain.fenzhan.Bill">
+        select * from (select * from fenzhan_bill
+        <where>
+            <if test="startnum!=null and startnum!=''">
+                startnum LIKE CONCAT('%',#{startnum},'%')
+            </if>
+            <if test="endnum!=null and endnum!=''">
+                AND endnum LIKE CONCAT('%',#{endnum},'%')
+            </if>
+            <if test="batch!=null and batch!=''">
+                AND batch LIKE CONCAT('%',#{batch},'%')
+            </if>
+            <if test="opera!=null and opera!=''">
+                AND opera LIKE CONCAT('%',#{opera},'%')
+            </if>
+            <if test="hname!=null and hname!=''">
+                AND hname LIKE CONCAT('%',#{hname},'%')
+            </if>
+            <if test="did!=null and did!=''">
+                AND did LIKE CONCAT('%',#{did},'%')
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findbycondition" resultType="cn.neusoft.domain.fenzhan.Bill">
+        select * from fenzhan_bill
+        <where>
+            <if test="startnum!=null and startnum!=''">
+                startnum LIKE CONCAT('%',#{startnum},'%')
+            </if>
+            <if test="endnum!=null and endnum!=''">
+                AND endnum LIKE CONCAT('%',#{endnum},'%')
+            </if>
+            <if test="batch!=null and batch!=''">
+                AND batch LIKE CONCAT('%',#{batch},'%')
+            </if>
+            <if test="opera!=null and opera!=''">
+                AND opera LIKE CONCAT('%',#{opera},'%')
+            </if>
+            <if test="hname!=null and hname!=''">
+                AND hname LIKE CONCAT('%',#{hname},'%')
+            </if>
+            <if test="did!=null and did!=''">
+                AND did LIKE CONCAT('%',#{did},'%')
+            </if>
+        </where>
+    </select>
+    
+    
+    
+<!--&lt;!&ndash;    模拟联查&ndash;&gt;-->
+<!--    <select id="findall" resultMap="test1">-->
+<!--        select * from fenzhan_bill b,fenzhan_test e where b.did=e.did-->
+<!--    </select>-->
+
+<!--    <resultMap id="test1" type="cn.neusoft.domain.fenzhan.Bill">-->
+<!--        <id column="startnum" property="startnum"/>-->
+<!--        <result column="endnum" property="endnum"/>-->
+<!--        <result column="batch" property="batch"/>-->
+<!--        <result column="opera" property="opera"/>-->
+<!--        <result column="hname" property="hname"/>-->
+<!--        <result column="did" property="did"/>-->
+<!--        <result column="date" property="date"/>-->
+<!--        <association property="test" javaType="cn.neusoft.domain.Test">-->
+<!--            <id column="did" property="tid"/>-->
+<!--            <result column="information" property="information"/>-->
+<!--        </association>-->
+<!--    </resultMap>-->
+
+<!--    发票联查-->
+    <select id="findall2" resultType="cn.neusoft.domain.fenzhan.Bill">
+        select * from fenzhan_bill b,order_info_all o where b.did=o.o_id
+    </select>
+    <resultMap id="test2" type="cn.neusoft.domain.fenzhan.Bill">
+        <id column="did" property="did"/>
+        <result column="endnum" property="endnum"/>
+        <result column="batch" property="batch"/>
+        <result column="opera" property="opera"/>
+        <result column="hname" property="hname"/>
+        <result column="startnum" property="startnum"/>
+        <result column="date" property="date"/>
+        <association property="bill_find" javaType="cn.neusoft.domain.fenzhan.Bill_find">
+            <id column="o_id" property="o_id"/>
+            <result column="p_amount" property="p_amount"/>
+            <result column="o_receiver" property="o_receiver"/>
+        </association>
+    </resultMap>
+
+
+<!-- 联查+分页-->
+    <select id="findbypage2" resultMap="test2">
+        select * from (
+        select * from fenzhan_bill b,order_info_all o
+        <where>
+            <if test="true">
+                b.did=o.o_id
+            </if>
+            <if test="hname!=null">
+                AND b.hname LIKE CONCAT('%',#{hname},'%')
+            </if>
+            <if test="batch!=null and batch!=''">
+                AND batch LIKE CONCAT('%',#{batch},'%')
+            </if>
+            <if test="startnum!=null and startnum!=''">
+                startnum LIKE CONCAT('%',#{startnum},'%')
+            </if>
+            <if test="endnum!=null and endnum!=''">
+                AND endnum LIKE CONCAT('%',#{endnum},'%')
+            </if>
+            <if test="date!=null">
+                AND date LIKE CONCAT('%',#{date},'%')
+            </if>
+        </where>
+        ) cond limit #{startIndex},#{pageSize}
+    </select>
+</mapper>

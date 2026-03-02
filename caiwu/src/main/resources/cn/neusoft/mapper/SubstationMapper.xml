@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.SubstationMapper">
+
+    <update id="jiesuan">
+        update order_info_all
+        set is_jiesuan="已结算"
+        <where>
+            <if test="o_substation!=null and o_substation!=''">
+                o_substation LIKE CONCAT('%',#{o_substation},'%')
+            </if>
+            <if test="p_name!=null and p_name!=''">
+                AND p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+            <if test="startTime!=null">
+                AND o_date &gt; #{startTime}
+            </if>
+            <if test="endTime!=null">
+                AND o_date &lt; #{endTime}
+            </if>
+        </where>
+    </update>
+
+    <select id="findWeiByPage" resultType="cn.neusoft.domain.order.OrderSub" parameterType="cn.neusoft.query.JobSubQuery">
+        select o_substation,p_type,p_subtype,p_name,o_afterSales,p_number,p_amount from order_info_all
+        <where>
+            <if test="o_substation!=null and o_substation!=''">
+                o_substation LIKE CONCAT('%',#{o_substation},'%')
+            </if>
+            <if test="p_name!=null and p_name!=''">
+                AND p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+            <if test="startTime!=null">
+                AND o_date &gt; #{startTime}
+            </if>
+            <if test="endTime!=null">
+                AND o_date &lt; #{endTime}
+            </if>
+            AND is_jiesuan!='已结算'
+        </where> order by o_substation,p_name
+    </select>
+
+    <select id="findYiByPage" resultType="cn.neusoft.domain.order.OrderSub" parameterType="cn.neusoft.query.JobSubQuery">
+        select * from order_info_all
+        <where>
+            <if test="o_substation!=null and o_substation!=''">
+                o_substation LIKE CONCAT('%',#{o_substation},'%')
+            </if>
+            <if test="p_name!=null and p_name!=''">
+                AND p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                AND o_date &gt; #{startTime}
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                AND o_date &lt; #{endTime}
+            </if>
+            AND is_jiesuan='已结算'
+        </where> order by o_substation,p_name
+    </select>
+
+</mapper>

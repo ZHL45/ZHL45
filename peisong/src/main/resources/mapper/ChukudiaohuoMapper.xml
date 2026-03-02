@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.ChukudiaohuoMapper">
+
+    <insert id="add" parameterType="cn.neusoft.domain.Peisong_ku">
+        insert into diaohuodan values(#{p_name},#{p_id},#{num})
+    </insert>
+
+    <select id="zxchukudan" resultType="cn.neusoft.domain.ChukumingxiReturn" parameterType="cn.neusoft.query.ChurukuMinxiQuery">
+
+        select * from (SELECT new.*, num * price AS totalPrice FROM (select fzname,allocateid,kufang_change1.cid p_id,kufang_change1.cname p_name,cnum num,tid,date,original_price price from kufang_change1,kufang_goods
+        where kufang_change1.cname=kufang_goods.cname) new) new3
+        <where>
+            <if test="fzname!=null and fzname!=''">
+                AND fzname LIKE CONCAT('%',#{fzname},'%')
+            </if>
+            <if test="p_name!=null and p_name!=''">
+                AND p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+            <if test="date1!=null and date1!=''">
+                AND date&lt;#{date1}
+            </if>
+            <if test="date2!=null and date2!=''">
+                AND date&gt;=#{date2}
+            </if>
+        </where>
+    </select>
+
+    <update id="editYujing" parameterType="cn.neusoft.domain.Zhongxin_yujing">
+        update zhongxin_yujing set yujing=#{yujing},maxStore=#{maxStore}
+        where p_name=#{p_name}
+    </update>
+    <select id="getYujing" resultType="cn.neusoft.domain.Zhongxin_yujing" >
+        select * from zhongxin_yujing
+    </select>
+
+    <select id="findByPage" resultType="cn.neusoft.domain.Zhongxin_yujing">
+
+        select * from zhongxin_yujing
+        <where>
+
+            <if test="p_name!=null and p_name!=''">
+                AND p_name LIKE CONCAT('%',#{p_name},'%')
+            </if>
+
+        </where>
+    </select>
+</mapper>

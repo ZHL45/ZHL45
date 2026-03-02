@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.LoginMapper">
+    <insert id="add" parameterType="cn.neusoft.domain.User">
+        insert into `load` values(#{id},#{psd},#{role},#{phone})
+    </insert>
+
+    <select id="exist" resultType="Integer">
+        SELECT COUNT(id) FROM  `load` where id=#{id} and role=#{role}
+    </select>
+
+
+    <select id="findbyid" resultType="cn.neusoft.domain.User">
+        select * from `load` where id=#{id}
+    </select>
+
+</mapper>

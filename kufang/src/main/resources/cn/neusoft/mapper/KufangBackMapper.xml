@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.KufangBackMapper">
+    <insert id="add" parameterType="cn.neusoft.mapper.KufangBackMapper">
+        insert into kufang_back values(#{cid},#{cname},#{tid},#{cnum},#{cclass},#{date},#{note})
+    </insert>
+
+    <select id="findbypage" resultType="cn.neusoft.domain.kufang.OrderReturn">
+        select * from order_info_return_copy1 limit #{startIndex},#{pageSize}
+    </select>
+
+
+</mapper>

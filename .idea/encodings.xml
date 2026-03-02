@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/caiwu/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/caiwu/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diaodu/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diaodu/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fenzhan/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fenzhan/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway-server-1314/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway-server-1314/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kehufuwu/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kehufuwu/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kufang/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kufang/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/login_register/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/login_register/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/peisong/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/peisong/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

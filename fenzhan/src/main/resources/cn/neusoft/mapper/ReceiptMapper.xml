@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neusoft.mapper.ReceiptMapper">
+    <select id="findall" resultType="cn.neusoft.domain.fenzhan.Receipt">
+        select * from fenzhan_receipt
+    </select>
+
+    <select id="findbyid" resultType="cn.neusoft.domain.fenzhan.Receipt">
+        select * from fenzhan_receipt where tid=#{id}
+    </select>
+
+    <insert id="add" parameterType="cn.neusoft.domain.fenzhan.Receipt">
+        insert into fenzhan_receipt values(#{tid},#{hname},#{hphone},#{tstation},#{ttype},#{addr},#{pman},#{cname},#{cunit},#{cnum},#{summoney},#{tstate},#{billnum},#{note},#{satisfaction},null,null,null,null,#{date})
+    </insert>
+
+    <select id="add_follow" resultType="cn.neusoft.domain.fenzhan.OrderAll">
+        select * from order_info_all where o_id=#{o_id}
+    </select>
+
+    <select id="findbill" resultType="cn.neusoft.domain.fenzhan.Bill">
+        select * from fenzhan_bill where did=#{did}
+    </select>
+
+    <insert id="add2" parameterType="cn.neusoft.domain.fenzhan.Receipt">
+        insert into fenzhan_receipt values(#{tid},#{hname},#{hphone},#{tstation},#{ttype},#{addr},null,#{cname},null,#{cnum},null,#{tstate},null,#{note},#{satisfaction},null,null,null,null,#{date})
+    </insert>
+
+    <insert id="add3" parameterType="cn.neusoft.domain.fenzhan.Receipt">
+        insert into fenzhan_receipt values(#{tid},#{hname},#{hphone},#{tstation},#{ttype},null,null,null,null,null,#{summoney},#{tstate},null,#{note},#{satisfaction},#{backaddr},#{backcname},#{backcnum},#{backmoney},#{date})
+    </insert>
+    <select id="add_follow3" resultType="cn.neusoft.domain.kufang.OrderReturn">
+        select * from order_info_return_copy1 where o_l_id=#{o_id}
+    </select>
+    <!--    <select id="findbypage" resultType="cn.neusoft.domain.fenzhan.Receipt">-->
+    <!--        select * from receipt limit #{startIndex},#{pageSize}-->
+    <!--    </select>-->
+
+    <select id="findbypage" resultType="cn.neusoft.domain.fenzhan.OrderAll">
+        select * from (select * from order_info_all
+        <where>
+            <if test="true">
+                o_afterSales LIKE CONCAT('%',"送货收款",'%')
+            </if>
+            <!--            <if test="pman!=null and pman!=''">-->
+            <!--                AND pman LIKE CONCAT('%',#{pman},'%')-->
+            <!--            </if>-->
+            <if test="start!=null">
+                o_date>start
+            </if>
+            <if test="end!=null">
+                end>o_date
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findbypage2" resultType="cn.neusoft.domain.fenzhan.OrderAll">
+        select * from (select * from order_info_all
+        <where>
+            <if test="ttype.equals('送货')">
+                o_afterSales ="送货"
+            </if>
+            <if test="ttype.equals('换货')">
+                o_afterSales ="换货"
+            </if>
+            <!--            <if test="pman!=null and pman!=''">-->
+            <!--                AND pman LIKE CONCAT('%',#{pman},'%')-->
+            <!--            </if>-->
+            <if test="start!=null">
+                o_date>start
+            </if>
+            <if test="end!=null">
+                end>o_date
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findbypage3" resultType="cn.neusoft.domain.fenzhan.OrderAll">
+        select * from (select * from order_info_all
+        <where>
+            <if test="ttype.equals('退货')">
+                o_afterSales ="退货"
+            </if>
+            <if test="ttype.equals('退款')">
+                o_afterSales ="退款"
+            </if>
+<!--            <if test="ttype.equals('退货')">-->
+<!--                o_afterSales LIKE CONCAT('%',"退货",'%') or o_afterSales LIKE CONCAT('%',"退款",'%')-->
+<!--            </if>-->
+
+            <!--            <if test="pman!=null and pman!=''">-->
+            <!--                AND pman LIKE CONCAT('%',#{pman},'%')-->
+            <!--            </if>-->
+            <if test="start!=null">
+                o_date>start
+            </if>
+            <if test="end!=null">
+                end>o_date
+            </if>
+        </where>) cond limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findbycondition" resultType="cn.neusoft.domain.fenzhan.Receipt">
+        select * from order_info_all
+        <where>
+            <if test="ttype!=null and ttype!=''">
+                o_afterSales LIKE CONCAT('%',#{ttype},'%')
+            </if>
+<!--            <if test="pman!=null and pman!=''">-->
+<!--                AND pman LIKE CONCAT('%',#{pman},'%')-->
+<!--            </if>-->
+            <if test="start!=null">
+                o_date>start
+            </if>
+            <if test="end!=null">
+                end>o_date
+            </if>
+        </where>
+    </select>
+
+
+    <select id="total" resultType="Integer">
+        SELECT COUNT(tid) FROM order_info_all
+    </select>
+
+
+    <select id="total2" resultType="Integer">
+        SELECT COUNT(tid) FROM ( select * from order_info_all
+        <where>
+            <if test="ttype!=null and ttype!=''">
+                o_afterSales LIKE CONCAT('%',#{ttype},'%')
+            </if>
+<!--            <if test="pman!=null and pman!=''">-->
+<!--                AND pman LIKE CONCAT('%',#{pman},'%')-->
+<!--            </if>-->
+            <if test="start!=null">
+                date>start
+            </if>
+            <if test="end!=null">
+                end>date
+            </if>
+        </where>)cond
+    </select>
+    <select id="getpman" resultType="String">
+        select fenzhan_deliver.postman from fenzhan_deliver where taskid=#{integer}
+    </select>
+
+    <insert id="set_state" parameterType="cn.neusoft.domain.fenzhan.Fenzhan_receipt_state">
+        insert into fenzhan_receipt_state values(#{id},#{state})
+    </insert>
+
+    <select id="get_state" resultType="cn.neusoft.domain.fenzhan.Fenzhan_receipt_state">
+        select * from fenzhan_receipt_state where id=#{id}
+    </select>
+
+    <select id="check" resultType="Integer">
+        select COUNT(id) FROM (select * from fenzhan_receipt_state where id=#{id}) a
+    </select>
+</mapper>
